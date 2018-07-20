@@ -4,10 +4,10 @@ USE trabalho;
 -- Queries do Bruno. ------------------------------------------------------------------------------------
 
 -- Quais estados nasceram mais pessoas com o nome X?
-SELECT * FROM `names` WHERE `name` = 'Anna' GROUP BY `state` ORDER BY `occurrences` DESC LIMIT 5; 
+SELECT * FROM `names` WHERE `name` = 'Anna' GROUP BY `state` ORDER BY `occurrences` DESC;
 
 -- Quais foram os N nomes mais populares no estado X?
-SELECT SUM(occurrences) as popularidade, name FROM `names` WHERE `state` = 'NY' GROUP BY `name` ORDER BY popularidade DESC LIMIT 5;
+SELECT SUM(occurrences) as popularidade, name FROM `names` WHERE `state` = 'NY' GROUP BY `name` ORDER BY popularidade DESC;
 
 -- Queries da Carla. ------------------------------------------------------------------------------------
 --Em que ano o nome X foi mais popular?
@@ -18,12 +18,12 @@ SELECT `year` FROM (SELECT `year`, MAX(occurences) as popularidade FROM `names` 
 SELECT CAST(ROUND(temp, 2) AS DECIMAL (5,2)) as porcentagem
 FROM (
     (SELECT (
-        (SELECT count(name) 
-            FROM `names` 
+        (SELECT count(name)
+            FROM `names`
                 WHERE `state` = 'NY' AND `year` = '1910' AND `genre` = 'M'
-        )* 100 / 
-        (SELECT COUNT(name) 
-            FROM `names` 
+        )* 100 /
+        (SELECT COUNT(name)
+            FROM `names`
                 WHERE `year` = '1910' AND `genre`= 'M')
         ) as temp
     FROM `names` LIMIT 1
