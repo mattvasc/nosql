@@ -1,8 +1,17 @@
 -- Para criar um container mysql: 
--- # docker run --name mysqlc -e MYSQL_ROOT_PASSWORD=root  -p 3306:3306 -d mysql
+-- # docker pull mysql:5.7
+-- # docker run --name mysqlc -e MYSQL_ROOT_PASSWORD=root  -p 3306:3306 -d mysql:5.7
 
+CREATE DATABASE IF NOT EXISTS trabalho;
 USE trabalho;
-
+CREATE TABLE IF NOT EXISTS names(
+    state CHAR(2),
+    genre CHAR(1),
+    year INT,
+    name VARCHAR(64),
+    occurrences  INT,
+    PRIMARY KEY (state, name, genre, year)
+);
 
 -- Queries do Bruno. ------------------------------------------------------------------------------------
 
