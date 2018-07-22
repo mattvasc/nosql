@@ -13,7 +13,7 @@ CREATE TABLE names(
   PRIMARY KEY (state, name, genre, year)
 )
 
-COPY names(state, genre, year, name, occurrences) FROM 'ALL_STATES.csv' WITH DELIMITER ',';
+COPY names(state, genre, year, name, occurrences) FROM 'ALL_STATES.csv' WITH DELIMITER = ',';
 
 -- Para mostrar os tempos de execucao
 tracing on;
