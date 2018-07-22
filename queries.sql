@@ -1,3 +1,6 @@
+-- Para criar um container mysql: 
+-- # docker run --name mysqlc -e MYSQL_ROOT_PASSWORD=root  -p 3306:3306 -d mysql
+
 USE trabalho;
 
 
