@@ -1,4 +1,4 @@
-#como sudo rodar:
+#De agora em diante todos os comandos com sudo ou como root:
 
 apt install docker.io
 
@@ -9,3 +9,12 @@ docker pull cassandra:latest
 docker run --name mysqlc -e MYSQL_ROOT_PASSWORD=root  -p 3306:3306 -d mysql:5.7
 docker run --name elasticc -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:6.3.1
 docker run --name cassandrac -p 7000:7000 -p 7001:7001 -p 7199:7199 -p 9042:9042 -p 8160 cassandra:latest
+
+
+# A qualquer momento pode-se parar/iniciar um container com:
+# docker stop <container-name>
+# e
+# docker start <container-name>
+
+#para listar os containers rodando:
+# docker ps
