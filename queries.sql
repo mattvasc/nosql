@@ -47,9 +47,15 @@ FROM (
 -- Queries do Mateus ------------------------------------------------------------------------------------
 
 -- Qual o nome feminino e masculino mais comuns do país no ano X?
-SELECT `name`, genre, MAX(popularidade) FROM (SELECT  `name`, genre, SUM(occurrences) as popularidade FROM `names` WHERE genre = 'F' GROUP BY `name` ORDER BY popularidade DESC) AS temp
+SELECT * FROM names WHERE YEAR =2000 AND genre='F' AND (occurrences) IN 
+( SELECT MAX(occurrences)
+  FROM names WHERE  year = 2000 AND genre = 'F'
+)
 UNION
-SELECT `name`, genre, MAX(popularidade) FROM (SELECT  `name`, genre, SUM(occurrences) as popularidade FROM `names` WHERE genre = 'M' GROUP BY `name` ORDER BY popularidade DESC) AS temp;
+SELECT * FROM names WHERE YEAR =2000 AND genre='M' AND (occurrences) IN 
+( SELECT MAX(occurrences)
+  FROM names WHERE  year = 2000 AND genre = 'M'
+);
 
 -- Qual o nome feminino e masculino que foram mais comuns em um número maior de anos?
 -- In progress
