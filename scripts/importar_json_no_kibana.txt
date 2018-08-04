@@ -1,0 +1,28 @@
+//na interface do kibana:
+
+PUT /all_states
+{
+ "mappings": {
+   "doc":{
+      "properties": {
+        "state": {"type": "keyword"},
+        "gender": {"type": "keyword"},
+        "year": {"type": "integer"},
+        "name": {"type": "keyword"}
+      }   
+   }
+ }
+}
+
+//no terminal:
+curl -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/all_states/doc/_bulk?pretty' --data-binary @ALL_STATES.json
+
+//no terminal, confirmar a quantidade:
+GET /_cat/indices?v
+
+GET /all_states/doc
+{
+    "query": {
+        "match_all": {}
+    }
+}
