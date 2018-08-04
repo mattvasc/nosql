@@ -4,6 +4,8 @@ WITH REPLICATION = {
  'replication_factor' : 1
 };
 
+USE trabalho;
+
 CREATE TABLE names(
   state varchar,
   genre varchar,
