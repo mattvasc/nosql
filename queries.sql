@@ -55,5 +55,11 @@ SELECT * FROM names WHERE YEAR =2000 AND genre='M' AND (occurrences) IN
   FROM names WHERE  year = 2000 AND genre = 'M'
 );
 
--- Qual o nome feminino e masculino que foram mais comuns em um número maior de anos?
--- In progress
+-- Faça um Ranking de maior desbalanço de gênero de crianças de masculino e feminino, mostrando o ano, estado e a medida de desbalanço.
+SELECT `state`, `year`, 
+SUM(CASE WHEN `genre`='M' THEN occurrences ELSE 0 END) AS `meninos`, 
+SUM(CASE WHEN `genre`='F' THEN occurrences ELSE 0 END) AS `meninas`,
+ABS(SUM(CASE WHEN `genre`='M' THEN occurrences ELSE 0 END) - SUM(CASE WHEN `genre`='F' THEN occurrences ELSE 0 END))/(SUM(CASE WHEN `genre`='M' THEN occurrences ELSE 0 END) + SUM(CASE WHEN `genre`='F' THEN occurrences ELSE 0 END)) AS `desigualdade`
+FROM `names` 
+-- WHERE year = 1910 AND state = 'AK'
+GROUP BY `state`, `year` ORDER BY desigualdade DESC ;
