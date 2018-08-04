@@ -1,8 +1,6 @@
 
 
-N=150000
 contadorarq = 0
-
 contadorlinha = 0
 
 
@@ -17,11 +15,11 @@ with open('ALL_STATES.json') as openfileobject:
 			filex.close()
 			contadorarq = contadorarq + 1
 			filex = open("json"+str(contadorarq)+".json", "w")
-			contadorlinha = 0
-			filex.write(line)
+			contadorlinha = 1
 		else:
-			filex.write(line)
 			contadorlinha = contadorlinha + 1
+		
+		filex.write(line)
 
 filex.close()
 			
