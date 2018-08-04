@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS names(
 -- Quais estados nasceram mais pessoas com o nome X?
 SELECT `state` FROM `names` WHERE `name` = 'Anna' GROUP BY `state`,`genre`,`name` ORDER BY `occurrences` DESC;
 -- [Mateus] Estou em dúvida, será que não é: 
-SELECT state FROM names WHERE name = 'Anne' group by state, genre;
+SELECT `state`, SUM(occurrences) AS popularidade FROM `names` WHERE `name` = 'Anne' group by `state`, `genre` ORDER BY popularidade DESC;
 
 -- Quais foram os N nomes mais populares no estado X?
 SELECT SUM(occurrences) as popularidade, name FROM `names` WHERE `state` = 'NY' GROUP BY `name` ORDER BY popularidade DESC;
