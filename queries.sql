@@ -30,6 +30,8 @@ SELECT SUM(occurrences) as popularidade, name FROM `names` WHERE `state` = 'NY' 
 --Em que ano o nome X foi mais popular?
 SELECT `year` FROM (SELECT `year`, MAX(occurrences) as popularidade FROM `names` WHERE `name` = 'Mary' GROUP BY `year`) AS temp--Qual seria a porcentagem de registros masculinos no Estado X e ano Y?
 
+
+--Qual seria a porcentagem de registros masculinos no Estado X e ano Y?
 SELECT CAST(ROUND(temp, 2) AS DECIMAL (5,2)) as porcentagem
 FROM (
     (SELECT (
