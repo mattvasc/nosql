@@ -18,8 +18,11 @@ CREATE TABLE IF NOT EXISTS names(
 -- Quais estados nasceram mais pessoas com o nome X?
 SELECT `state` FROM `names` WHERE `name` = 'Anna' GROUP BY `state`,`genre`,`name` ORDER BY `occurrences` DESC;
 -- [Mateus] Estou em dúvida, será que não é: 
-SELECT `state`, SUM(occurrences) AS popularidade FROM `names` WHERE `name` = 'Anne' group by `state`, `genre` ORDER BY popularidade DESC;
-
+SET LOCAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));
+SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));
+SELECT * FROM (
+SELECT `state`, SUM(occurrences) AS popularidade FROM `names` WHERE `name` = 'Anne' group by `state`, `genre` ORDER BY popularidade DESC) AS temp HAVING popularidade = MAX(popularidade);
+-- [FIM Mateus]
 -- Quais foram os N nomes mais populares no estado X?
 SELECT SUM(occurrences) as popularidade, name FROM `names` WHERE `state` = 'NY' GROUP BY `name` ORDER BY popularidade DESC;
 
