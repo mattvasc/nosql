@@ -1,0 +1,336 @@
+#SELECT `state` 
+# FROM `names` 
+#   WHERE `name` = 'Anna' 
+#     GROUP BY `state`,`genre`,`name` 
+#       ORDER BY `occurrences` DESC;
+# resposta: 5467
+# tempo: 4milisegundos
+GET /all_states/_search/
+{
+   "query":{
+      "bool":{
+         "must":{
+            "term":{
+               "name":"Anna"
+            }
+         }
+      }
+   },
+   "aggs":{
+      "group_by_state":{
+         "terms":{
+            "field":"state"
+         }
+      },
+      "group_by_gender":{
+         "terms":{
+            "field":"gender"
+         }
+      }
+   },
+   "_source":[
+      "state"
+   ],
+   "sort":{
+      "occurrences":{
+         "order":"desc"
+      }
+   }
+}
+
+
+#SELECT SUM(occurrences) as popularidade, name 
+# FROM `names` 
+#   WHERE `state` = 'NY' 
+#     GROUP BY `name` 
+#       ORDER BY popularidade DESC;
+#resposta: 291657
+#tempo: 32 milissegundos depois 26 milisegundos
+
+GET /all_states/_search
+{
+   "query":{
+      "bool":{
+         "must":{
+            "term":{
+               "state":"NY"
+            }
+         }
+      }
+   },
+   "aggs":{
+      "group_by_name":{
+         "terms":{
+            "field":"name"
+         }
+      },
+      "total_occurrences":{
+         "sum":{
+            "field":"occurrences"
+         }
+      }
+   },
+   "_source":[
+      "name",
+      "occurrences"
+   ]
+}
+
+
+#SELECT `year` 
+#   FROM (
+        SELECT `year`, MAX(occurrences) as popularidade 
+#          FROM `names` 
+#           WHERE `name` = 'Mary' 
+#               GROUP BY `year`) AS temp
+# resposta: 6512
+# maior ocorrencia: 8184 ano de 1918
+# tempo: 4 milisegundos
+
+GET all_states/_search
+{
+   "query":{
+      "bool":{
+         "must":{
+            "term":{
+               "name":"Mary"
+            }
+         }
+      }
+   },
+   "aggs":{
+      "max_occurrences":{
+         "max":{
+            "field":"occurrences"
+         }
+      },
+      "group_by_year":{
+         "terms":{
+            "field":"year"
+         }
+      }
+   },
+   "_source":[
+      "year",
+      "occurrences"
+   ],
+   "sort":{
+      "occurrences":{
+         "order":"desc"
+      }
+   }
+}
+
+#SELECT CAST(ROUND(temp, 2) AS DECIMAL (5,2)) as porcentagem
+#FROM (
+#    (SELECT (
+#        (SELECT count(name)
+#            FROM `names`
+#                WHERE `state` = 'NY' AND `year` = '1910' AND `genre` = 'M'
+#        )* 100 /
+#        (SELECT COUNT(name)
+#            FROM `names`
+#                WHERE `year` = '1910' AND `genre`= 'M')
+#        ) as temp
+#    FROM `names` LIMIT 1
+#    )
+#) temporaria
+#tempo: 26milisegundo
+#resultado: 1 derp
+
+GET all_states/_search
+{
+   "query":{
+      "bool":{
+         "must":[
+            {
+               "term":{
+                  "year":1910
+               }
+            },
+            {
+               "term":{
+                  "gender":"M"
+               }
+            }
+         ]
+      }
+   },
+   "size":0,
+   "aggs":{
+      "group_by_years":{
+         "terms":{
+            "field":"year"
+         },
+         "aggs":{
+            "years":{
+               "date_histogram":{
+                  "field":"year",
+                  "interval":"year"
+               },
+               "aggs":{
+                  "total_people":{
+                     "value_count":{
+                        "field":"gender"
+                     }
+                  },
+                  "total_masc_state":{
+                     "filter":{
+                        "bool":{
+                           "must":[
+                              {
+                                 "term":{
+                                    "state":"NY"
+                                 }
+                              }
+                           ]
+                        }
+                     },
+                     "aggs":{
+                        "filt-state":{
+                           "value_count":{
+                              "field":"state"
+                           }
+                        }
+                     }
+                  },
+                  "masc-ny-years-percentage":{
+                     "bucket_script":{
+                        "buckets_path":{
+                           "tMascWithState":"total_masc_state>filt-state",
+                           "totalMasc":"total_people"
+                        },
+                        "script":"params.tMascWithState / params.totalMasc *100"
+                     }
+                  }
+               }
+            }
+         }
+      }
+   },
+   "_source":"year",
+   "sort":{
+      "year":{
+         "order":"desc"
+      }
+   }
+}
+
+
+
+
+#SELECT MAX(occurrences)
+#  FROM names WHERE  year = 2000 AND genre = 'F'
+# não dá pra fazer UNION no elastic. na documentação, eles dizem para fazer queries simultaneas e depois união na unha, algo assim. https://www.elastic.co/guide/en/elasticsearch/client/net-api/current/union.html
+#tempo: 7 milisegundos
+GET all_states/_search?size=1
+{
+   "query":{
+      "bool":{
+         "must":[
+            {
+               "term":{
+                  "year":2000
+               }
+            },
+            {
+               "term":{
+                  "gender":"F"
+               }
+            }
+         ]
+      }
+   },
+   "sort":{
+      "occurrences":{
+         "order":"desc"
+      }
+   },
+   "_source": ["name","state"]
+}
+
+#não deu pra ordernar por desigualdade (pq esta aninhado na agregação). ordenado por ano!!
+#4 milisegundos
+#ranking de 10
+
+{
+   "size":0,
+   "aggs":{
+      "group_by_years":{
+         "terms":{
+            "field":"year"
+         },
+         "aggs":{
+            "years":{
+               "date_histogram":{
+                  "field":"year",
+                  "interval":"year"
+               },
+               "aggs":{
+                  "total_people":{
+                     "value_count":{
+                        "field":"gender"
+                     }
+                  },
+                  "total_masc":{
+                     "filter":{
+                        "bool":{
+                           "must":[
+                              {
+                                 "term":{
+                                    "gender":"M"
+                                 }
+                              }
+                           ]
+                        }
+                     },
+                     "aggs":{
+                        "filt-state":{
+                           "value_count":{
+                              "field":"state"
+                           }
+                        }
+                     }
+                  },
+                  "total_fem":{
+                     "filter":{
+                        "bool":{
+                           "must":[
+                              {
+                                 "term":{
+                                    "gender":"F"
+                                 }
+                              }
+                           ]
+                        }
+                     },
+                     "aggs":{
+                        "fillt-state":{
+                           "value_count":{
+                              "field":"state"
+                           }
+                        }
+                     }
+                  },
+                  "desigualdade":{
+                     "bucket_script":{
+                        "buckets_path":{
+                           "totalMeninos":"total_masc>filt-state",
+                           "totalMeninas":"total_fem>fillt-state",
+                           "totalPessoas":"total_people"
+                        },
+                        "script":"(params.totalMeninos-params.totalMeninas) * -1 / params.totalPessoas"
+                     }
+                  }
+               }
+            }
+         }
+      }
+   },
+   "_source":"state, year",
+   "sort":{
+      "year":{
+         "order":"desc"
+      }
+   }
+}
