@@ -72,3 +72,17 @@ SELECT name FROM busca2 WHERE state = 'NY' ORDER BY occurrences DESC limit 10;
 17:38:42.087000
 17:39:01.309574
 */
+
+-- Qual o nome mais comuns do país no ano X?    [not 100%, but is something]
+-- Cassandra não ordena por coluna agregada!!!! 
+DROP TABLE IF EXISTS busca5;
+CREATE TABLE busca5(
+    state TEXT,
+    genre TEXT,
+    year INT,
+    name TEXT,
+    occurrences  INT,
+		PRIMARY KEY( name,occurrences)
+);
+COPY busca5(state,genre,year,name,occurrences) FROM 'sample.csv';
+SELECT name, SUM(occurrences) AS popularidade FROM busca5 WHERE year = 2000  GROUP BY name  ALLOW FILTERING;
