@@ -75,8 +75,8 @@ SELECT name FROM busca2 WHERE state = 'NY' ORDER BY occurrences DESC limit 10;
 
 -- Qual o nome mais comuns do país no ano X?    [not 100%, but is something]
 -- Cassandra não ordena por coluna agregada!!!! 
-DROP TABLE IF EXISTS busca5;
-CREATE TABLE busca5(
+DROP TABLE IF EXISTS busca51;
+CREATE TABLE busca51(
     state TEXT,
     genre TEXT,
     year INT,
@@ -84,5 +84,14 @@ CREATE TABLE busca5(
     occurrences  INT,
 		PRIMARY KEY( name,occurrences)
 );
-COPY busca5(state,genre,year,name,occurrences) FROM 'sample.csv';
-SELECT name, SUM(occurrences) AS popularidade FROM busca5 WHERE year = 2000  GROUP BY name  ALLOW FILTERING;
+COPY busca51(state,genre,year,name,occurrences) FROM 'sample.csv';
+SELECT name, SUM(occurrences) AS popularidade FROM busca51 WHERE year = 2000  GROUP BY name  ALLOW FILTERING;
+-- Salva o resultado em um csv, aplique ordenação externamente da busca acima e salve na tabela da busca52
+DROP TABLE IF EXISTS busca52;
+CREATE TABLE busca52(
+    name TEXT,
+    popularidade  INT,
+   PRIMARY KEY(name, popularidade)
+) WITH CLUSTERING ORDER BY ( popularidade DESC);
+COPY busca52(name,popularidade) FROM 'nomes.csv';
+SELECT name, popularidade FROM busca52  LIMIT 1;
