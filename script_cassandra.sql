@@ -53,8 +53,22 @@ SELECT state, occurrences FROM pname3 WHERE name = 'Anne' ORDER BY occurrences D
 17:32:01.369000
 17:32:02.069252
 
-************************QUERY 2 *
-SELECT SUM(occurrences) as popularidade, name FROM names WHERE state = 'NY' GROUP BY name;
+************************QUERY 2 */
+-- CRIANDO TABELA
+DROP TABLE IF EXISTS busca2;
+CREATE TABLE busca2(
+    state TEXT,
+    genre TEXT,
+    year INT,
+    name TEXT,
+    occurrences  INT,
+		PRIMARY KEY((state), occurrences)
+);
+-- POVOANDO TABELA
+COPY busca2(state,genre,year,name,occurrences) FROM 'sample.csv';
+--      query:
+SELECT name FROM busca2 WHERE state = 'NY' ORDER BY occurrences DESC limit 10;
+/*
 17:38:42.087000
 17:39:01.309574
 */
