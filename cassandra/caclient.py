@@ -22,11 +22,11 @@ i = 0
 if(visualizar == 'y'):
 	for row in rows:
 		i = 1 + i
-		print (row)
+		print (row[0] + ", " + str(row[1]))
 else:
 	for row in rows:
 		i = 1 + i
     	
 
-print("Demorou " + str(elapsed) +" Segundos para realizar a busca, num total de " + str(i)+ " linhas.")
+#print("Demorou " + str(elapsed) +" Segundos para realizar a busca, num total de " + str(i)+ " linhas.")
 
